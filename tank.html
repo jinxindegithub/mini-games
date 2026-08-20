@@ -93,6 +93,106 @@
     border-radius: 3px;
     margin: 0 2px;
   }
+
+  /* ===== 移动端适配 ===== */
+  #touchControls {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0;
+    width: 100%;
+    height: 45vw;
+    max-height: 240px;
+    z-index: 100;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  #touchControls.show { display: block; }
+
+  .dpad {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    width: 150px;
+    height: 150px;
+    pointer-events: auto;
+  }
+  .dpad-btn {
+    position: absolute;
+    background: rgba(255,215,0,0.15);
+    border: 2px solid rgba(255,215,0,0.4);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffd700;
+    font-size: 28px;
+    font-weight: bold;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .dpad-btn:active, .dpad-btn.active {
+    background: rgba(255,215,0,0.5);
+    border-color: #ffd700;
+  }
+  .dpad-up    { top: 0;    left: 50px; width: 50px; height: 50px; }
+  .dpad-down  { bottom: 0; left: 50px; width: 50px; height: 50px; }
+  .dpad-left  { left: 0;   top: 50px;  width: 50px; height: 50px; }
+  .dpad-right { right: 0;  top: 50px;  width: 50px; height: 50px; }
+  .dpad-center{ top: 50px; left: 50px; width: 50px; height: 50px; background: rgba(255,215,0,0.05); border-radius: 50%;}
+
+  .action-btns {
+    position: absolute;
+    right: 30px;
+    bottom: 40px;
+    pointer-events: auto;
+  }
+  .btn-fire {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(200,50,50,0.35);
+    border: 2px solid rgba(255,100,100,0.5);
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .btn-fire:active, .btn-fire.active {
+    background: rgba(255,50,50,0.6);
+    transform: scale(0.92);
+  }
+  .btn-pause {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.4);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    z-index: 101;
+    pointer-events: auto;
+  }
+
+  @media (max-width: 768px) {
+    h1 { font-size: 22px !important; }
+    #hud { font-size: 11px !important; gap: 10px !important; flex-wrap: wrap; justify-content: center; }
+    .controls { display: none; }
+    #overlay h2 { font-size: 24px !important; }
+    #overlay p { font-size: 13px !important; }
+    #overlay button { padding: 8px 24px !important; font-size: 14px !important; }
+  }
 </style>
 </head>
 <body>
@@ -114,6 +214,21 @@
   <div class="controls">
     <p><span>↑</span><span>↓</span><span>←</span><span>→</span> 或 <span>W</span><span>A</span><span>S</span><span>D</span> 移动 | <span>空格</span> 射击 | <span>P</span> 暂停</p>
   </div>
+
+<!-- 移动端虚拟按键 -->
+<div id="touchControls">
+  <button class="btn-pause" id="btnPause">⏸</button>
+  <div class="dpad">
+    <div class="dpad-btn dpad-up" data-key="ArrowUp">▲</div>
+    <div class="dpad-btn dpad-down" data-key="ArrowDown">▼</div>
+    <div class="dpad-btn dpad-left" data-key="ArrowLeft">◀</div>
+    <div class="dpad-btn dpad-right" data-key="ArrowRight">▶</div>
+    <div class="dpad-center"></div>
+  </div>
+  <div class="action-btns">
+    <div class="btn-fire" data-key="Space">🔥</div>
+  </div>
+</div>
 
 <script>
 const canvas = document.getElementById('gameCanvas');
@@ -1045,6 +1160,76 @@ document.addEventListener('keyup', (e) => {
 });
 
 startBtn.onclick = startGame;
+
+// ===== 移动端适配 =====
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    || (navigator.maxTouchPoints && navigator.maxTouchPoints > 1);
+}
+
+function setupMobileControls() {
+  if (!isMobile()) return;
+
+  const tc = document.getElementById('touchControls');
+  tc.classList.add('show');
+
+  // 防止页面滚动
+  document.body.style.touchAction = 'none';
+  document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+  // 画布自适应
+  function resizeCanvas() {
+    const container = document.getElementById('gameContainer');
+    const canvas = document.getElementById('gameCanvas');
+    const vw = window.innerWidth;
+    const vh = window.innerHeight - 200;
+    const scale = Math.min(vw / canvas.width, vh / canvas.height, 1);
+    container.style.transform = `scale(${scale})`;
+    container.style.transformOrigin = 'top center';
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+  window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 200));
+
+  function pressKey(keyCode, el) {
+    keys[keyCode] = true;
+    if (el) el.classList.add('active');
+  }
+  function releaseKey(keyCode, el) {
+    keys[keyCode] = false;
+    if (el) el.classList.remove('active');
+  }
+
+  document.querySelectorAll('[data-key]').forEach(btn => {
+    const key = btn.getAttribute('data-key');
+    btn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      pressKey(key, btn);
+    }, { passive: false });
+    btn.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      releaseKey(key, btn);
+    }, { passive: false });
+    btn.addEventListener('touchcancel', (e) => {
+      e.preventDefault();
+      releaseKey(key, btn);
+    }, { passive: false });
+  });
+
+  // 暂停按钮
+  document.getElementById('btnPause').addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (gameRunning) gamePaused = !gamePaused;
+  }, { passive: false });
+
+  // 点击画布开始
+  canvas.addEventListener('touchstart', function onFirstTouch() {
+    if (!gameRunning) startGame();
+    canvas.removeEventListener('touchstart', onFirstTouch);
+  }, { passive: true });
+}
+
+setupMobileControls();
 </script>
 </body>
 </html>
