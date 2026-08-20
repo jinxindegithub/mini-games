@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 小游戏合集</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Microsoft YaHei', 'Courier New', monospace;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 900px;
+    width: 100%;
+  }
+  h1 {
+    text-align: center;
+    color: #ffd700;
+    font-size: 42px;
+    margin-bottom: 10px;
+    text-shadow: 3px 3px 0 #c00, 0 0 20px rgba(255,215,0,0.5);
+    letter-spacing: 6px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8899aa;
+    margin-bottom: 50px;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+  .games {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .game-card {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 30px;
+    text-decoration: none;
+    color: #fff;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .game-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+    transition: left 0.5s;
+  }
+  .game-card:hover::before {
+    left: 100%;
+  }
+  .game-card:hover {
+    transform: translateY(-5px);
+    border-color: #ffd700;
+    box-shadow: 0 10px 40px rgba(255,215,0,0.2);
+  }
+  .game-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+    display: block;
+  }
+  .game-title {
+    font-size: 24px;
+    color: #ffd700;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  .game-desc {
+    color: #aabbcc;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .game-tag {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 4px 12px;
+    background: rgba(255,215,0,0.15);
+    color: #ffd700;
+    font-size: 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,215,0,0.3);
+  }
+  .footer {
+    text-align: center;
+    color: #556677;
+    margin-top: 50px;
+    font-size: 12px;
+  }
+  .status {
+    text-align: center;
+    color: #0f0;
+    margin-bottom: 30px;
+    font-size: 13px;
+  }
+  .status::before {
+    content: '● ';
+    animation: blink 1.5s infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎮 小 游 戏 合 集</h1>
+    <p class="subtitle">HTML5 · 即点即玩 · 无需安装</p>
+    <div class="status">服务器运行中 · 在线可玩</div>
+    
+    <div class="games">
+      <a href="contra.html" class="game-card">
+        <span class="game-icon">🔫</span>
+        <div class="game-title">魂斗罗</div>
+        <div class="game-desc">经典 FC 风格横版射击游戏，像素美术，多种武器，Boss 战</div>
+        <span class="game-tag">射击 · 动作</span>
+      </a>
+      
+      <a href="tank.html" class="game-card">
+        <span class="game-icon">🎯</span>
+        <div class="game-title">坦克大战</div>
+        <div class="game-desc">经典坦克对战，保卫基地，多种地形和道具</div>
+        <span class="game-tag">策略 · 射击</span>
+      </a>
+    </div>
+    
+    <div class="footer">
+      用浏览器打开即可游玩 · 推荐使用 Chrome / Edge
+    </div>
+  </div>
+</body>
+</html>
